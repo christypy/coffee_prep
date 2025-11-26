@@ -43,23 +43,24 @@
         box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.15); 
     }
     
-    /* 控制區 */
+    /* 控制區 (調整佈局以容納三個元素) */
     .controls { 
         background: #fff; 
         padding: 12px; 
         border-radius: 12px; 
         box-shadow: 0 1px 3px rgba(0,0,0,0.08); 
         margin-bottom: 15px; 
-        display: flex; 
+        display: flex; /* 啟用 Flexbox */
         justify-content: space-between; 
         align-items: center; 
+        gap: 8px; /* 增加元素間隔 */
     }
     select { 
         padding: 10px; 
         font-size: 16px; 
         border-radius: 8px; 
         border: 1px solid var(--color-light-gray); 
-        width: 60%; 
+        width: 40%; /* 縮小 Select 寬度 */
         appearance: none; 
         background-color: #f7f7f7;
     }
@@ -73,7 +74,18 @@
         font-weight: bold; 
         font-size: 15px; 
         transition: background 0.2s;
+        flex-grow: 1; /* 讓按鈕填滿剩餘空間 */
     }
+    
+    /* 新增：全部取消按鈕樣式 */
+    #clearAllBtn {
+        background: #9e9e9e; /* 灰色 */
+        color: white;
+    }
+    #clearAllBtn:hover {
+        background: #757575;
+    }
+
 
     /* 統計區 */
     .stats-container { 
@@ -202,6 +214,16 @@
         #mainListContainer {
             grid-template-columns: 1fr; 
         }
+        .controls {
+            flex-wrap: wrap; /* 換行顯示按鈕 */
+        }
+        select {
+            width: 100%; /* 手機上 Select 佔滿一行 */
+        }
+        .btn {
+            flex-grow: 1; 
+            width: 48%; /* 讓兩個按鈕平均分配一行 */
+        }
     }
     
     /* 列表卡片 (維持 V14 樣式) */
@@ -254,6 +276,7 @@
             <option value="0">星期日</option>
         </select>
         <button class="btn" onclick="renderOrders()">刷新列表</button>
+        <button class="btn" id="clearAllBtn" onclick="clearAllDone()">全部取消</button>
     </div>
 
     <div class="stats-container">
@@ -340,6 +363,7 @@
     }
 
     function getStorageKey(name, item, loc) {
+        // 確保 key 包含當日日期，這樣隔天就不會影響
         return `${getTodayDateString()}_${sanitizeKeyPart(name)}_${sanitizeKeyPart(item)}_${sanitizeKeyPart(loc)}`;
     }
 
@@ -367,6 +391,34 @@
     }
     
     // --------------------------------------------------
+    // 【新增核心邏輯：全部取消】
+    // --------------------------------------------------
+    window.clearAllDone = function() {
+        if (!confirm("確定要清除所有已完成的備餐狀態嗎？\n(這將重置當前日期的所有訂單)")) {
+            return;
+        }
+
+        const day = parseInt(document.getElementById('daySelect').value);
+        const todaysOrders = customers.filter(c => c.days.length === 0 || c.days.includes(day));
+
+        // 遍歷所有今天的訂單並清除 localStorage 記錄
+        todaysOrders.forEach(c => {
+            // 處理多品項的合併訂單
+            if (c.name.startsWith("貢丸老闆")) {
+                 // 貢丸老闆有兩筆原始記錄，要分別清除
+                 localStorage.removeItem(getStorageKey("貢丸老闆 (拿)", "熱拿鐵", c.loc));
+                 localStorage.removeItem(getStorageKey("貢丸老闆 (手)", "熱手沖", c.loc));
+            } else {
+                localStorage.removeItem(getStorageKey(c.name, c.item, c.loc));
+            }
+        });
+
+        // 重新渲染列表以更新狀態和統計數據
+        renderOrders();
+        alert("所有備餐狀態已清除！");
+    }
+
+    // --------------------------------------------------
     // 【核心邏輯：清單渲染】
     // --------------------------------------------------
     function renderOrders() {
@@ -383,8 +435,10 @@
             otherColumn.innerHTML = `<div class="column-title">🛵 其他區域訂單</div>`;
             statsNeighborDiv.innerHTML = '<div style="text-align:center;color:#999;font-size:12px;">休息中</div>';
             statsOtherDiv.innerHTML = '<div style="text-align:center;color:#999;font-size:12px;">休息中</div>';
-            return; // 終止後續的渲染和統計邏輯
+            document.getElementById('clearAllBtn').disabled = true; // 休息日禁用
+            return; 
         }
+        document.getElementById('clearAllBtn').disabled = false; // 非休息日啟用
         // ------------------------------------
 
         neighborColumn.innerHTML = `<div class="column-title">🏠 左右鄰居訂單</div>`;
@@ -417,6 +471,7 @@
                     type: "multi", 
                     note: c2.note || c.note, 
                     originalItems: [
+                        // 注意這裡儲存的 name 和 item 必須是原始的，以便後續的 isItemDone 和 toggleDone 能正確查找
                         { name: c.name, item: c.item, type: c.type, loc: c.loc, count: c.count || 1, tag: c.tag },
                         { name: c2.name, item: c2.item, type: c2.type, loc: c2.loc, count: c2.count || 1, tag: c2.tag }
                     ]
@@ -451,11 +506,15 @@
             }
 
             // 執行統計
+            let allItemsDone = true; // 用於檢查 multi card 是否完成
             itemsToRender.forEach(item => {
                 let qty = item.count || 1;
                 let isNeighbor = (item.loc === "右邊鄰居" || item.loc === "左邊鄰居");
                 let targetStats = isNeighbor ? sNeigh : sOther;
-                const isDone = isItemDone(item.name, item.item, item.loc);
+                // 必須使用 item.name 和 item.item 來檢查，即使是在 multi-card 內部
+                const isDone = isItemDone(item.name, item.item, item.loc); 
+                
+                if (!isDone) allItemsDone = false; // 只要有一個未完成，則多品項卡片就未完成
 
                 if (targetStats[item.type]) {
                     targetStats[item.type].total += qty;
@@ -510,11 +569,11 @@
                     </div>
                 `;
             } else {
-                let allDone = c.originalItems.every(item => isItemDone(item.name, item.item, item.loc));
-                const doneClass = allDone ? 'done' : '';
+                const doneClass = allItemsDone ? 'done' : '';
                 let itemDescHtml = c.originalItems.map(item => item.item).join(' | ');
 
                 let checkboxHtml = c.originalItems.map(item => {
+                    // 這裡的 isDone/toggleDone 必須使用 originalItem 的 name/item
                     const isDone = isItemDone(item.name, item.item, item.loc);
                     const checkedAttr = isDone ? 'checked' : '';
                     const safeName = escapeJsString(item.name);
