@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>咖啡備餐確認系統 v3.0</title>
+<style>
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f4f9; padding: 15px; color: #333; max-width: 600px; margin: 0 auto;}
+    h2 { text-align: center; color: #4a3b32; margin-bottom: 15px; }
+    
+    /* 控制區 */
+    .controls { background: #fff; padding: 10px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
+    select { padding: 10px; font-size: 16px; border-radius: 8px; border: 1px solid #ccc; width: 65%; }
+    .btn { background: #dda15e; color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 14px; }
+    
+    /* 統計區 - 雙欄佈局 */
+    .stats-container { display: flex; gap: 10px; margin-bottom: 20px; }
+    .stat-box { flex: 1; background: #fff; border-radius: 10px; padding: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); border-top: 4px solid #4a3b32; }
+    .stat-box h3 { margin: 0 0 8px 0; font-size: 15px; color: #4a3b32; text-align: center; border-bottom: 1px solid #eee; padding-bottom: 5px;}
+    .stat-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px; }
+    .stat-row.total { font-weight: bold; border-top: 1px dashed #ccc; margin-top: 5px; padding-top: 5px; color: #bc6c25; }
+
+    /* 列表區 */
+    .section-title { font-weight: bold; margin-top: 25px; margin-bottom: 8px; color: #dda15e; border-bottom: 2px solid #e0e0e0; padding-bottom: 2px; font-size: 18px; }
+    .card { background: white; padding: 12px; border-radius: 8px; margin-bottom: 8px; border-left: 6px solid #ddd; box-shadow: 0 1px 3px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: flex-start; }
+    
+    /* 卡片顏色分類 */
+    .card.latte { border-left-color: #bc6c25; }
+    .card.americano { border-left-color: #283618; }
+    .card.drip { border-left-color: #606c38; } /* 手沖專用色 */
+    
+    .info-col { flex: 1; }
+    .item-name { font-weight: bold; font-size: 17px; color: #222; }
+    .item-desc { font-weight: bold; font-size: 16px; color: #444; }
+    .item-detail { font-size: 13px; color: #666; margin-top: 4px; }
+    
+    .tag { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 11px; margin-left: 5px; vertical-align: middle; }
+    .tag-pre { background: #e9edc9; color: #5f6f22; border: 1px solid #5f6f22; }
+    .tag-sugar { background: #ffddd2; color: #e26d5c; border: 1px solid #e26d5c; }
+    .note-text { color: #d00000; font-size: 12px; display: block; margin-top: 2px; font-weight: bold;}
+
+    .walk-in-section { background: #e8e8e8; padding: 15px; border-radius: 8px; margin-top: 30px; border: 1px dashed #999; }
+    .walk-in-section h3 { margin-top: 0; color: #555; }
+    .walk-in-section li { margin-bottom: 5px; font-size: 15px; }
+</style>
+</head>
+<body>
+
+<h2>☕ 備餐助理 v3.0</h2>
+
+<div class="controls">
+    <select id="daySelect" onchange="renderOrders()">
+        <option value="1">星期一</option>
+        <option value="2">星期二</option>
+        <option value="3">星期三</option>
+        <option value="4">星期四</option>
+        <option value="5">星期五</option>
+        <option value="6">星期六</option>
+        <option value="0">星期日</option>
+    </select>
+    <button class="btn" onclick="renderOrders()">刷新列表</button>
+</div>
+
+<div class="stats-container">
+    <div class="stat-box" style="border-top-color: #606c38;">
+        <h3>🏠 左右鄰居</h3>
+        <div id="stats-neighbor"></div>
+    </div>
+    <div class="stat-box" style="border-top-color: #bc6c25;">
+        <h3>🛵 其他區域</h3>
+        <div id="stats-other"></div>
+    </div>
+</div>
+
+<div id="orderList">
+    </div>
+
+<div class="walk-in-section">
+    <h3>🏃 來店客備忘</h3>
+    <ul>
+        <li><b>短髮瘦瘦：</b>19-23g粉 / 磨8 (冰/熱美)</li>
+        <li><b>畢業生：</b>冰美式</li>
+        <li><b>戴眼鏡公主頭：</b>熱拿鐵</li>
+        <li><b>芭樂：</b>熱拿鐵 + 糖(3-5g)</li>
+    </ul>
+</div>
+
+<script>
+    // 資料庫：已更新 TYPE 欄位以支援精細分類
+    const customers = [
+        // 右邊鄰居
+        { loc: "右邊鄰居", name: "怡香軒", item: "熱美式", type: "hot_am", days: [] },
+        { loc: "右邊鄰居", name: "油飯", item: "熱美式", type: "hot_am", days: [], note: "每日問" },
+        { loc: "右邊鄰居", name: "山城米食", item: "拿鐵", type: "hot_latte", days: [], tag: "寄杯" }, // 假設熱拿鐵
+        { loc: "右邊鄰居", name: "橘子攤", item: "拿鐵", type: "hot_latte", days: [] }, // 假設熱拿鐵
+        { loc: "右邊鄰居", name: "糖果", item: "熱拿鐵", type: "hot_latte", days: [6, 0], tag: "付兩天" },
+
+        // 左邊鄰居
+        { loc: "左邊鄰居", name: "布老闆", item: "熱美式", type: "hot_am", days: [5], tag: "寄杯" },
+        { loc: "左邊鄰居", name: "牛肉", item: "熱拿鐵", type: "hot_latte", days: [3, 5, 0], tag: "+3g糖" },
+        { loc: "左邊鄰居", name: "甘蔗雞", item: "冰美式", type: "ice_am", days: [] },
+        { loc: "左邊鄰居", name: "國聯哥", item: "冰美式", type: "ice_am", days: [] },
+
+        // 其他區域
+        { loc: "近十字路口", name: "牛肉爸爸兒子", item: "大拿鐵 x2", count: 2, type: "large_hot_latte", days: [], note: "爸爸粉20g" },
+        { loc: "過十字路口直行", name: "魚老闆", item: "大拿鐵", type: "large_hot_latte", days: [2, 3, 5], tag: "寄杯" },
+        { loc: "過十字路口直行", name: "魚老闆鄰居(水果)", item: "拿鐵", type: "hot_latte", days: [2, 3, 6, 0] }, // 假設熱拿鐵
+        { loc: "過十字路口直行", name: "小辣椒", item: "熱美式", type: "hot_am", days: [] },
+        { loc: "過十字路口直行", name: "蝦老闆", item: "熱美式", type: "hot_am", days: [2, 4, 5, 6, 0] },
+        // 貢丸老闆拆分成兩筆紀錄
+        { loc: "過十字路口直行", name: "貢丸老闆 (拿)", item: "熱拿鐵", type: "hot_latte", days: [3, 0] },
+        { loc: "過十字路口直行", name: "貢丸老闆 (手)", item: "熱手沖", type: "hand_drip", days: [3, 0], note: "熱手沖，總計$185" },
+        { loc: "過十字路口直行", name: "豐原素食", item: "熱美式", type: "hot_am", days: [3] },
+        { loc: "過十字路口直行", name: "菜老闆", item: "熱拿鐵", type: "hot_latte", days: [] },
+        { loc: "過十字路口直行", name: "近中山路水果攤", item: "熱美式", type: "hot_am", days: [] },
+        { loc: "過十字路口右轉", name: "福記對面豬肉", item: "熱美式", type: "hot_am", days: [], tag: "寄杯" }
+    ];
+
+    // 品項名稱對應表 (用於顯示在統計欄)
+    const typeNames = {
+        hot_am: '☕ 熱美式',
+        ice_am: '🧊 冰美式',
+        hot_latte: '🔥 熱拿鐵',
+        ice_latte: '❄️ 冰拿鐵',
+        large_hot_latte: '🥤 大熱拿',
+        hand_drip: '💧 手沖',
+    };
+
+    function renderOrders() {
+        const day = parseInt(document.getElementById('daySelect').value);
+        const listDiv = document.getElementById('orderList');
+        const statsNeighborDiv = document.getElementById('stats-neighbor');
+        const statsOtherDiv = document.getElementById('stats-other');
+        
+        listDiv.innerHTML = '';
+        
+        // 初始化統計物件 (包含所有 6 種分類)
+        const initialStats = { hot_am: 0, ice_am: 0, hot_latte: 0, ice_latte: 0, large_hot_latte: 0, hand_drip: 0 };
+        let sNeigh = { ...initialStats };
+        let sOther = { ...initialStats };
+
+        let currentLoc = '';
+        
+        // 過濾當日訂單
+        const todaysOrders = customers.filter(c => c.days.length === 0 || c.days.includes(day));
+
+        todaysOrders.forEach(c => {
+            let qty = c.count || 1;
+            
+            // 判斷是否為鄰居 (右邊鄰居 OR 左邊鄰居)
+            let isNeighbor = (c.loc === "右邊鄰居" || c.loc === "左邊鄰居");
+            let targetStats = isNeighbor ? sNeigh : sOther;
+            
+            // 統計邏輯 (使用新的 type 鍵值)
+            if (targetStats[c.type] !== undefined) {
+                 targetStats[c.type] += qty;
+            }
+
+            // 渲染標題
+            if (c.loc !== currentLoc) {
+                listDiv.innerHTML += `<div class="section-title">${c.loc}</div>`;
+                currentLoc = c.loc;
+            }
+
+            // 卡片樣式
+            let cardClass = 'other';
+            if(c.type.includes('am')) cardClass = 'americano';
+            else if(c.type.includes('latte')) cardClass = 'latte';
+            else if(c.type.includes('drip')) cardClass = 'drip';
+
+            let tagsHtml = '';
+            if(c.tag) {
+                let tagStyle = c.tag.includes('糖') || c.tag.includes('粉') ? 'tag-sugar' : 'tag-pre';
+                tagsHtml += `<span class="tag ${tagStyle}">${c.tag}</span>`;
+            }
+            let noteHtml = c.note ? `<span class="note-text">⚠️ ${c.note}</span>` : '';
+
+            listDiv.innerHTML += `
+                <div class="card ${cardClass}">
+                    <div class="info-col">
+                        <div class="item-name">${c.name} ${tagsHtml}</div>
+                        <div class="item-detail">${noteHtml}</div>
+                    </div>
+                    <div class="item-desc">${c.item}</div>
+                </div>
+            `;
+        });
+
+        // 產生統計 HTML 的小幫手函式
+        function makeStatHtml(stats) {
+            let html = '';
+            let totalCups = 0;
+            
+            for (const typeKey in typeNames) {
+                if (stats[typeKey] > 0) {
+                    html += `<div class="stat-row"><span>${typeNames[typeKey]}</span> <b>${stats[typeKey]} 杯</b></div>`;
+                    totalCups += stats[typeKey];
+                }
+            }
+            if(html === '') {
+                 html = '<div style="text-align:center;color:#999;font-size:12px;">今日無固定訂單</div>';
+            } else {
+                 html += `<div class="stat-row total"><span>🏆 總計</span> <b>${totalCups} 杯</b></div>`;
+            }
+            return html;
+        }
+
+        statsNeighborDiv.innerHTML = makeStatHtml(sNeigh);
+        statsOtherDiv.innerHTML = makeStatHtml(sOther);
+    }
+
+    // 初始化：自動選擇今天
+    const today = new Date().getDay();
+    document.getElementById('daySelect').value = today;
+    renderOrders();
+
+</script>
+</body>
+</html>
