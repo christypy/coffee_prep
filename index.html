@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>咖啡備餐確認系統 v15.0 (總數與剩餘)</title>
+<title>咖啡備餐確認系統</title>
 <style>
     :root {
         /* 主色板 */
@@ -376,6 +376,17 @@
         const statsNeighborDiv = document.getElementById('stats-neighbor');
         const statsOtherDiv = document.getElementById('stats-other');
         
+        // V15.0 新增: 處理固定休息日 (星期一)
+        if (day === 1) { 
+            const restHtml = '<p style="text-align:center; color:var(--color-danger); font-size:18px; padding: 50px 0;">🎉 星期一固定休息日，無備餐訂單！</p>';
+            neighborColumn.innerHTML = `<div class="column-title">🏠 左右鄰居訂單</div>${restHtml}`;
+            otherColumn.innerHTML = `<div class="column-title">🛵 其他區域訂單</div>`;
+            statsNeighborDiv.innerHTML = '<div style="text-align:center;color:#999;font-size:12px;">休息中</div>';
+            statsOtherDiv.innerHTML = '<div style="text-align:center;color:#999;font-size:12px;">休息中</div>';
+            return; // 終止後續的渲染和統計邏輯
+        }
+        // ------------------------------------
+
         neighborColumn.innerHTML = `<div class="column-title">🏠 左右鄰居訂單</div>`;
         otherColumn.innerHTML = `<div class="column-title">🛵 其他區域訂單</div>`;
 
