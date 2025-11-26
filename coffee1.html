@@ -5,16 +5,104 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>咖啡準備系統</title>
   <style>
-    body { font-family: 'Segoe UI', sans-serif; margin:0; padding:0; background: linear-gradient(to bottom, #fff9e6, #fff2cc); }
-    h1 { text-align: center; font-size: 2.5rem; color: #b36b00; text-shadow: 1px 1px 3px #ffd699; margin-top: 1rem; }
-    select { display: block; margin: 1rem auto; padding: 0.5rem; font-size: 1rem; border-radius: 10px; border: 2px solid #ffcc66; }
-    .container { display: flex; flex-direction: column; gap: 1rem; padding: 1rem; max-width: 1000px; margin: auto; }
-    @media(min-width: 768px){ .container { flex-direction: row; } }
-    .area { flex: 1; background: #fff7e6; padding: 1rem; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-    .area h2 { color: #b36b00; font-size: 1.5rem; margin-bottom: 0.5rem; }
-    .stats { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; font-weight: bold; color: #804000; margin-bottom: 1rem; }
-    .item { display: flex; align-items: center; gap: 0.5rem; padding: 0.5rem; background: #fff; border-radius: 12px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    .item:hover { box-shadow: 0 4px 12px rgba(255, 204, 102, 0.5); }
+    /* 基本頁面樣式 */
+    body {
+      font-family: 'Segoe UI', 'Microsoft JhengHei', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(to bottom, #fff8f0, #fff0d9);
+      color: #4d2600;
+    }
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      color: #b35c00;
+      padding: 1rem 0;
+      text-shadow: 1px 1px 3px #ffd699;
+    }
+    select {
+      display: block;
+      margin: 0.5rem auto 1rem auto;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: 2px solid #ffcc66;
+      background-color: #fff7e6;
+    }
+
+    /* 區塊容器 */
+    .container {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      padding: 0 1rem 2rem 1rem;
+      max-width: 1200px;
+      margin: auto;
+    }
+    @media (min-width: 768px) {
+      .container {
+        flex-direction: row;
+      }
+    }
+
+    /* 區塊樣式 */
+    .area {
+      flex: 1;
+      background: #fff3e0;
+      border-radius: 15px;
+      padding: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .area h2 {
+      text-align: center;
+      color: #b35c00;
+      margin-bottom: 0.8rem;
+    }
+
+    /* 統計資訊 */
+    .stats {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-around;
+      gap: 0.5rem;
+      font-weight: bold;
+      font-size: 0.95rem;
+      color: #804000;
+      padding: 0.5rem;
+      background: #fff1d6;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    /* 勾選清單 */
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem;
+      background: #fff7e6;
+      border-radius: 12px;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .item:hover {
+      background: #ffe6b3;
+      box-shadow: 0 4px 10px rgba(255,204,102,0.3);
+    }
+    .item input[type="checkbox"] {
+      transform: scale(1.2);
+      accent-color: #ff9900;
+    }
+    .item div {
+      display: flex;
+      flex-direction: column;
+    }
+    .item small {
+      color: #804000;
+    }
   </style>
 </head>
 <body>
@@ -24,13 +112,13 @@
 
   <div class="container">
     <div class="area" id="neighborArea">
-      <h2>鄰居區統計</h2>
+      <h2>鄰居區</h2>
       <div class="stats" id="neighborStats"></div>
       <div id="neighborItems"></div>
     </div>
 
     <div class="area" id="otherArea">
-      <h2>其他區統計</h2>
+      <h2>其他區</h2>
       <div class="stats" id="otherStats"></div>
       <div id="otherItems"></div>
     </div>
@@ -43,14 +131,13 @@
       { area: '鄰居區', name: '山城米食', drink: '拿鐵(寄杯)', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] },
       { area: '鄰居區', name: '橘子攤', drink: '拿鐵', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] },
       { area: '鄰居區', name: '糖果', drink: '熱拿鐵', days: ['Sat','Sun'] },
-
       { area: '鄰居區', name: '布老闆', drink: '熱美式(寄杯)', days: ['Fri'] },
       { area: '鄰居區', name: '牛肉', drink: '熱拿鐵+3g糖', days: ['Wed','Fri','Sun'] },
       { area: '鄰居區', name: '甘蔗雞', drink: '冰美式', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] },
       { area: '鄰居區', name: '國聯哥', drink: '冰美式', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] },
 
-      { area: '其他區', name: '牛肉爸爸&兒子', drink: '大拿鐵×2', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] },
-      { area: '其他區', name: '魚老闆', drink: '大拿鐵(寄杯)', days: ['Tue','Wed','Fri'] },
+      { area: '其他區', name: '牛肉爸爸&兒子', drink: '大熱拿×2', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] },
+      { area: '其他區', name: '魚老闆', drink: '大熱拿(寄杯)', days: ['Tue','Wed','Fri'] },
       { area: '其他區', name: '水果鄰居', drink: '拿鐵', days: ['Tue','Wed','Sat','Sun'] },
       { area: '其他區', name: '小辣椒', drink: '熱美式', days: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'] },
       { area: '其他區', name: '蝦老闆', drink: '熱美式', days: ['Tue','Thu','Fri','Sat'] },
@@ -63,7 +150,12 @@
 
     const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
     const daySelect = document.getElementById('daySelect');
-    days.forEach(d => { const option = document.createElement('option'); option.value=d; option.textContent=d; daySelect.appendChild(option); });
+    days.forEach(d => {
+      const option = document.createElement('option');
+      option.value=d;
+      option.textContent=d;
+      daySelect.appendChild(option);
+    });
 
     function countSummary(list) {
       let summary = { '熱美式':0,'冰美式':0,'熱拿鐵':0,'大熱拿':0,'手沖':0 };
@@ -71,8 +163,11 @@
         const d = i.drink;
         if(d.includes('熱美式')) summary['熱美式']++;
         if(d.includes('冰美式')) summary['冰美式']++;
-        if(d.includes('熱拿鐵') && !d.includes('大拿')) summary['熱拿鐵']++;
-        if(d.includes('大拿')) { const match=d.match(/×(\d+)/); summary['大熱拿'] += match ? parseInt(match[1]) : 1; }
+        if(d.includes('熱拿鐵') && !d.includes('大熱')) summary['熱拿鐵']++;
+        if(d.includes('大熱')) {
+          const match=d.match(/×(\d+)/);
+          summary['大熱拿'] += match ? parseInt(match[1]) : 1;
+        }
         if(d.includes('手沖')) summary['手沖']++;
       });
       return summary;
@@ -87,7 +182,7 @@
       function renderArea(areaList, statsId, itemsId){
         const stats = countSummary(areaList);
         const statsDiv = document.getElementById(statsId);
-        statsDiv.innerHTML = `熱美式:${stats['熱美式']} 冰美式:${stats['冰美式']} 熱拿鐵:${stats['熱拿鐵']} 大熱拿:${stats['大熱拿']} 手沖:${stats['手沖']}`;
+        statsDiv.textContent = `熱美式: ${stats['熱美式']} | 冰美式: ${stats['冰美式']} | 熱拿鐵: ${stats['熱拿鐵']} | 大熱拿: ${stats['大熱拿']} | 手沖: ${stats['手沖']}`;
 
         const itemsDiv = document.getElementById(itemsId);
         itemsDiv.innerHTML = '';
