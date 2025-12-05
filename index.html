@@ -43,24 +43,24 @@
         box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.15); 
     }
     
-    /* 控制區 (調整佈局以容納三個元素) */
+    /* 控制區 */
     .controls { 
         background: #fff; 
         padding: 12px; 
         border-radius: 12px; 
         box-shadow: 0 1px 3px rgba(0,0,0,0.08); 
         margin-bottom: 15px; 
-        display: flex; /* 啟用 Flexbox */
+        display: flex; 
         justify-content: space-between; 
         align-items: center; 
-        gap: 8px; /* 增加元素間隔 */
+        gap: 8px; 
     }
     select { 
         padding: 10px; 
         font-size: 16px; 
         border-radius: 8px; 
         border: 1px solid var(--color-light-gray); 
-        width: 40%; /* 縮小 Select 寬度 */
+        width: 40%; 
         appearance: none; 
         background-color: #f7f7f7;
     }
@@ -74,12 +74,11 @@
         font-weight: bold; 
         font-size: 15px; 
         transition: background 0.2s;
-        flex-grow: 1; /* 讓按鈕填滿剩餘空間 */
+        flex-grow: 1; 
     }
     
-    /* 新增：全部取消按鈕樣式 */
     #clearAllBtn {
-        background: #9e9e9e; /* 灰色 */
+        background: #9e9e9e; 
         color: white;
     }
     #clearAllBtn:hover {
@@ -87,7 +86,7 @@
     }
 
 
-    /* 統計區 */
+    /* 統計區 (保持不變) */
     .stats-container { 
         display: flex; 
         gap: 15px; 
@@ -110,8 +109,6 @@
         border-bottom: 1px solid var(--color-light-gray); 
         padding-bottom: 5px;
     }
-    
-    /* 統計行樣式 */
     .stat-row { 
         display: flex; 
         justify-content: space-between; 
@@ -125,46 +122,33 @@
         margin-top: 8px;
         padding-top: 8px;
     }
-
-    /* ==== 核心改動：顯示總數與剩餘數的結構 START ==== */
     .progress-counts {
         display: flex;
         align-items: center;
-        gap: 10px; /* 總計與剩餘之間的間距 */
+        gap: 10px; 
         font-weight: 500;
         font-size: 14px;
     }
     .count-total {
         color: #777;
-        /* 在總計行中，總數不需要特別顯示 */
     }
     .count-remaining {
         display: flex;
         align-items: center;
-        gap: 4px; /* 剩: 與數字的間距 */
+        gap: 4px; 
     }
-
-    /* 個別項目 */
     .count-remaining b { 
         font-size: 20px; 
         color: var(--color-danger); 
     }
-
-    /* 總計行 */
-    .stat-row.total .progress-counts {
-        font-size: 16px;
-    }
     .stat-row.total .count-remaining b {
         font-size: 22px; 
-        color: var(--color-total-progress); /* 總計剩餘數使用橘色 */
+        color: var(--color-total-progress); 
     }
     .stat-row.total .count-total {
-        color: var(--color-primary); /* 總計行的總數顏色深一點 */
+        color: var(--color-primary); 
         font-weight: 700;
     }
-    /* ==== 核心改動：顯示總數與剩餘數的結構 END ==== */
-
-    /* 進度條樣式 */
     .stat-row-progress {
         width: 100%;
         height: 6px; 
@@ -190,7 +174,6 @@
         gap: 15px;
         margin-bottom: 20px;
     }
-
     .list-column {
         padding: 10px 10px 0 10px; 
         background: #fff; 
@@ -198,7 +181,6 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
         border: 1px solid var(--color-light-gray);
     }
-
     .column-title {
         font-size: 18px;
         font-weight: 700;
@@ -209,24 +191,23 @@
         border-bottom: 3px solid var(--color-accent); 
     }
     
-    /* 手機佈局 */
     @media (max-width: 768px) {
         #mainListContainer {
             grid-template-columns: 1fr; 
         }
         .controls {
-            flex-wrap: wrap; /* 換行顯示按鈕 */
+            flex-wrap: wrap; 
         }
         select {
-            width: 100%; /* 手機上 Select 佔滿一行 */
+            width: 100%; 
         }
         .btn {
             flex-grow: 1; 
-            width: 48%; /* 讓兩個按鈕平均分配一行 */
+            width: 48%; 
         }
     }
     
-    /* 列表卡片 (維持 V14 樣式) */
+    /* ======== 列表卡片美化區塊 ======== */
     .card { 
         background: #fff;
         padding: 10px; 
@@ -234,21 +215,151 @@
         margin-bottom: 8px; 
         border-left: 6px solid #ddd; 
         box-shadow: 0 1px 3px rgba(0,0,0,0.05); 
-        display: flex; justify-content: space-between; align-items: center; 
+        display: flex; 
+        align-items: flex-start; /* 頂部對齊 */
         transition: background 0.1s;
     }
+    
+    /* 資訊欄 */
+    .info-col {
+        flex-grow: 1;
+        padding-right: 10px;
+        min-width: 60%; /* 確保客戶名稱有足夠空間 */
+    }
+    .item-name { 
+        font-weight: 600; 
+        font-size: 16px; 
+        color: #222; 
+    } 
+    .item-detail { 
+        font-size: 10px; 
+        margin-top: 3px; 
+    }
+    .note-text { 
+        font-size: 10px; 
+        color: var(--color-danger); 
+        font-weight: 600; 
+    }
+    
+    /* 勾選/品項欄 */
+    .right-col {
+        display: flex;
+        flex-direction: column; /* 垂直堆疊 */
+        align-items: flex-end; /* 右對齊 */
+        min-width: 40%;
+        text-align: right;
+    }
+    .item-desc { 
+        font-weight: 600; 
+        font-size: 15px; 
+        color: var(--color-primary); 
+        margin-bottom: 5px; /* 增加與勾選框的間距 */
+        line-height: 1.2;
+    } 
+
+    /* 單品項勾選框美化 */
+    input[type="checkbox"] {
+        /* 隱藏原生勾選框 */
+        appearance: none;
+        -webkit-appearance: none;
+        width: 30px; 
+        height: 30px; 
+        border: 3px solid #ccc;
+        border-radius: 6px;
+        cursor: pointer;
+        outline: none;
+        position: relative;
+        transition: all 0.2s;
+        margin-top: 0;
+    }
+
+    input[type="checkbox"]:checked {
+        border-color: var(--color-success);
+        background-color: var(--color-success);
+    }
+
+    input[type="checkbox"]:checked::after {
+        /* 勾勾圖案 (使用 unicode) */
+        content: '✓';
+        display: block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+        color: white;
+        font-weight: bold;
+    }
+
+    /* 完成狀態 */
     .card.done { 
         opacity: 0.7; 
         border-left-color: var(--color-light-gray) !important; 
         background: var(--color-done); 
     }
-    /*... (其他卡片顏色和文字樣式保持不變) ...*/
+    .card.done input[type="checkbox"] {
+        border-color: var(--color-success);
+    }
+    .card.done .item-name, .card.done .item-desc {
+        text-decoration: line-through;
+        color: #777;
+    }
 
-    .item-name { font-weight: 600; font-size: 16px; color: #222; } 
-    .item-desc { font-weight: 600; font-size: 15px; color: var(--color-primary); margin-bottom: 0; } 
-    .tag { padding: 2px 6px; font-size: 10px; margin-left: 4px; border-radius: 4px; background: #ffe0b2; color: #6d4c41; font-weight: 600; }
-    .note-text { font-size: 10px; margin-top: 3px; color: var(--color-danger); font-weight: 600; }
+    /* 多品項卡片 (貢丸老闆) 美化 */
+    .item-multi-display {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    .item-multi-display > div {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+        margin-top: 4px;
+    }
+    .item-multi-display input[type="checkbox"] {
+        width: 20px; /* 多品項的勾選框可以小一點 */
+        height: 20px;
+        border-width: 2px;
+        margin-left: 5px;
+    }
+    .item-multi-display input[type="checkbox"]:checked::after {
+        font-size: 14px;
+    }
+    /* 確保多品項的商品名稱對齊 */
+    .item-multi-display span {
+        font-size: 14px;
+        color: #555;
+        font-weight: 500;
+        text-align: right;
+    }
+
+
+    /* 特殊樣式 (保持不變) */
+    .card.hot_latte_sugar {
+        border-left-color: #f77a7a !important; 
+        background: #fffafa; 
+    }
+    .card.uncertain {
+        border-left-color: #fca311 !important; 
+        background: #fff8e1; 
+    }
+    .card.uncertain.done { 
+        opacity: 0.8; 
+        background: #fcf6e4;
+        border-left-color: #e8c784 !important; 
+    }
     
+    .tag { 
+        padding: 2px 6px; 
+        font-size: 10px; 
+        margin-left: 4px; 
+        border-radius: 4px; 
+        background: #ffe0b2; 
+        color: #6d4c41; 
+        font-weight: 600; 
+    }
     h4 {
         font-size: 15px;
         font-weight: 600;
@@ -309,7 +420,19 @@
         </div>
 </div>
 
+<<<<<<< HEAD
 
+=======
+<div class="walk-in-section">
+    <h3>🏃 來店客備忘</h3>
+    <ul>
+        <li><b>超早來的畢業生：</b>冰美式</li>
+        <li><b>短髮瘦瘦：</b>19-23g粉 / 磨8 (冰/熱美)</li>
+        <li><b>內衣店老闆：</b>熱拿鐵</li>
+        <li><b>芭樂：</b>熱拿鐵 + 糖(3g)</li>
+    </ul>
+</div>
+>>>>>>> dc2fea9 (更新待確認品項及美化勾選匡)
 
 <script>
     // ----------------------------------------------------
@@ -319,13 +442,13 @@
         // 右邊鄰居
         { loc: "右邊鄰居", name: "怡香軒", item: "熱美式", type: "hot_am", days: [] },
         { loc: "右邊鄰居", name: "油飯", item: "熱美式", type: "hot_am", days: [], note: "每日問" },
-        { loc: "右邊鄰居", name: "山城米食", item: "拿鐵", type: "hot_latte", days: [], tag: "寄杯" }, 
-        { loc: "右邊鄰居", name: "橘子攤", item: "拿鐵", type: "hot_latte", days: [] }, 
+        { loc: "右邊鄰居", name: "山城米食", item: "熱拿鐵", type: "hot_latte", days: [], tag: "寄杯" }, 
+        { loc: "右邊鄰居", name: "橘子攤", item: "熱拿鐵", type: "hot_latte", days: [] }, 
         { loc: "右邊鄰居", name: "糖果", item: "熱拿鐵", type: "hot_latte", days: [6, 0], tag: "付兩天" },
 
         // 左邊鄰居
+        { loc: "左邊鄰居", name: "牛肉", item: "熱拿鐵 (加糖)", type: "hot_latte_sugar", days: [3, 5, 0], tag: "必須加3g糖" },
         { loc: "左邊鄰居", name: "布老闆", item: "熱美式", type: "hot_am", days: [5], tag: "寄杯" },
-        { loc: "左邊鄰居", name: "牛肉", item: "熱拿鐵", type: "hot_latte", days: [3, 5, 0], tag: "+3g糖" },
         { loc: "左邊鄰居", name: "甘蔗雞", item: "冰美式", type: "ice_am", days: [] },
         { loc: "左邊鄰居", name: "國聯哥", item: "冰美式", type: "ice_am", days: [] },
 
@@ -334,22 +457,41 @@
         { loc: "過十字路口直行", name: "魚老闆", item: "大拿鐵", type: "large_hot_latte", days: [2, 3, 5], tag: "寄杯" },
         { loc: "過十字路口直行", name: "魚老闆鄰居(水果)", item: "拿鐵", type: "hot_latte", days: [2, 3, 6, 0] }, 
         { loc: "過十字路口直行", name: "小辣椒", item: "熱美式", type: "hot_am", days: [] },
-        { loc: "過十字路口直行", name: "城隍廟口鐵鍋行", item: "冰美式x2",  count: 2, type: "ice_am", days: [5] },
         { loc: "過十字路口直行", name: "蝦老闆", item: "熱美式",type: "hot_am", days: [2, 4, 5, 6, 0] },
+
+        { loc: "過十字路口直行", name: "城隍廟口鐵鍋行", item: "冰美式x2",  count: 2, type: "ice_am", days: [5] },
         
-        // 貢丸老闆：將這兩筆資料視為一組進行合併渲染
+        // 梨山蜜蘋果 (待確認品項)
+        { 
+            loc: "梨山蜜蘋果", 
+            name: "梨山蜜蘋果", 
+            item: "熱美式/熱拿鐵 (擇一)", 
+            type: "potential_item", 
+            count: 1,              
+            days: [4, 5], 
+            tag: "第二趟問", 
+            note: "請務必先詢問，僅做為備忘提醒" 
+        },
+
+
+        { loc: "過十字路口直行", name: "豐原素食", item: "熱美式", type: "hot_am", days: [3] },
+        { loc: "過十字路口直行", name: "近中山路水果攤", item: "熱美式", type: "hot_am", days: [] },
+        { loc: "過十字路口右轉", name: "福記對面豬肉", item: "熱美式", type: "hot_am", days: [], tag: "寄杯" },
+                // 貢丸老闆：將這兩筆資料視為一組進行合併渲染
         { loc: "過十字路口直行", name: "貢丸老闆 (拿)", item: "熱拿鐵", type: "hot_latte", days: [3, 0] },
         { loc: "過十字路口直行", name: "貢丸老闆 (手)", item: "熱手沖", type: "hand_drip", days: [3, 0], note: "總計$185" },
-        
-        { loc: "過十字路口直行", name: "豐原素食", item: "熱美式", type: "hot_am", days: [3] },
         { loc: "過十字路口直行", name: "菜老闆", item: "熱拿鐵", type: "hot_latte", days: [] },
-        { loc: "過十字路口直行", name: "近中山路水果攤", item: "熱美式", type: "hot_am", days: [] },
-        { loc: "過十字路口右轉", name: "福記對面豬肉", item: "熱美式", type: "hot_am", days: [], tag: "寄杯" }
+
     ];
 
     const typeNames = {
-        hot_am: '☕ 熱美式', ice_am: '🧊 冰美式', hot_latte: '🔥 熱拿鐵', 
-        ice_latte: '❄️ 冰拿鐵', large_hot_latte: '🥤 大熱拿', hand_drip: '💧 手沖',
+        hot_am: '☕ 熱美式', ice_am: '🧊 冰美式', 
+        hot_latte: '🔥 熱拿鐵', 
+        hot_latte_sugar: '🍬 熱拿鐵 (加糖)', 
+        ice_latte: '❄️ 冰拿鐵', 
+        large_hot_latte: '🥤 大熱拿', 
+        hand_drip: '💧 手沖',
+        potential_item: '❓ 待確認品項', 
     };
 
     function getTodayDateString() {
@@ -394,7 +536,7 @@
     }
     
     // --------------------------------------------------
-    // 【新增核心邏輯：全部取消】
+    // 【核心邏輯：全部取消】
     // --------------------------------------------------
     window.clearAllDone = function() {
         if (!confirm("確定要清除所有已完成的備餐狀態嗎？\n(這將重置當前日期的所有訂單)")) {
@@ -502,27 +644,34 @@
             } else {
                 itemsToRender = [c];
                 let cardClass = '';
-                if(c.type && c.type.includes('am')) cardClass = 'americano';
+                // 決定卡片顏色樣式 (單品項)
+                if(c.type === 'potential_item') cardClass = 'uncertain';
+                else if(c.type === 'hot_latte_sugar') cardClass = 'hot_latte_sugar'; 
+                else if(c.type && c.type.includes('am')) cardClass = 'americano';
                 else if(c.type && c.type.includes('latte')) cardClass = 'latte';
                 else if(c.type && c.type.includes('drip')) cardClass = 'drip';
                 c.cardClass = cardClass;
             }
 
-            // 執行統計
+            // 執行統計 (這裡會處理 potential_item 的計數)
             let allItemsDone = true; // 用於檢查 multi card 是否完成
             itemsToRender.forEach(item => {
                 let qty = item.count || 1;
                 let isNeighbor = (item.loc === "右邊鄰居" || item.loc === "左邊鄰居");
                 let targetStats = isNeighbor ? sNeigh : sOther;
-                // 必須使用 item.name 和 item.item 來檢查，即使是在 multi-card 內部
-                const isDone = isItemDone(item.name, item.item, item.loc); 
                 
-                if (!isDone) allItemsDone = false; // 只要有一個未完成，則多品項卡片就未完成
+                // 檢查是否是統計類型中的一種
+                if (typeNames.hasOwnProperty(item.type)) {
+                    // 必須使用 item.name 和 item.item 來檢查，即使是在 multi-card 內部
+                    const isDone = isItemDone(item.name, item.item, item.loc); 
+                    
+                    if (!isDone) allItemsDone = false; // 只要有一個未完成，則多品項卡片就未完成
 
-                if (targetStats[item.type]) {
-                    targetStats[item.type].total += qty;
-                    if (isDone) {
-                        targetStats[item.type].done += qty;
+                    if (targetStats[item.type]) {
+                        targetStats[item.type].total += qty;
+                        if (isDone) {
+                            targetStats[item.type].done += qty;
+                        }
                     }
                 }
             });
@@ -558,9 +707,11 @@
                 const safeName = escapeJsString(c.name);
                 const safeItem = escapeJsString(c.item);
                 const safeLoc = escapeJsString(c.loc);
+                
+                const cardClass = c.cardClass;
 
                 targetHtml += `
-                    <div class="card ${c.cardClass} ${doneClass}">
+                    <div class="card ${cardClass} ${doneClass}">
                         <div class="info-col">
                             <div class="item-name">${c.name} ${tagsHtml}</div>
                             <div class="item-detail">${noteHtml}</div>
@@ -573,8 +724,9 @@
                 `;
             } else {
                 const doneClass = allItemsDone ? 'done' : '';
-                let itemDescHtml = c.originalItems.map(item => item.item).join(' | ');
-
+                // 移除 itemDescHtml，改為在 item-multi-display 內渲染
+                
+                // 【修改點】調整多品項的 checkboxHtml 結構，以配合新的 CSS
                 let checkboxHtml = c.originalItems.map(item => {
                     // 這裡的 isDone/toggleDone 必須使用 originalItem 的 name/item
                     const isDone = isItemDone(item.name, item.item, item.loc);
@@ -584,8 +736,8 @@
                     const safeLoc = escapeJsString(item.loc);
                     
                     return `
-                        <div style="display:flex; align-items:center; justify-content:flex-end; font-size:12px;">
-                            <span style="margin-right:5px; color:#555;">${item.item.replace('熱', '').replace('大', '')}</span>
+                        <div>
+                            <span>${item.item}</span>
                             <input type="checkbox" ${checkedAttr} onclick="toggleDone('${safeName}', '${safeItem}', '${safeLoc}')">
                         </div>
                     `;
@@ -599,8 +751,7 @@
                         </div>
                         <div class="right-col">
                             <div class="item-multi-display">
-                                <div class="item-desc">${itemDescHtml}</div>
-                                <div style="display:flex; gap:10px;">${checkboxHtml}</div>
+                                ${checkboxHtml}
                             </div>
                         </div>
                     </div>
