@@ -278,7 +278,17 @@
         <button class="btn" onclick="renderOrders()">刷新列表</button>
         <button class="btn" id="clearAllBtn" onclick="clearAllDone()">全部取消</button>
     </div>
-
+<div class="walk-in-section">
+    <h3>🏃 來店客備忘</h3>
+    <ul>
+        <li><b>超早來的畢業生：</b>冰美式</li>
+        <li><b>短髮瘦瘦：</b>19-23g粉 / 磨8 (冰/熱美)</li>
+        <li><b>內衣店老闆：</b>熱拿鐵</li>
+        <li><b>芭樂：</b>熱拿鐵 + 糖(3-5g)</li>
+        <li><b>梨山蜜蘋果 熱美式or熱拿鐵(四或五，第二趟問)</b></li>
+        
+    </ul>
+</div>
     <div class="stats-container">
         <div class="stat-box" style="border-top-color: var(--color-success);">
             <h3>🏠 左右鄰居 總計</h3>
@@ -299,17 +309,7 @@
         </div>
 </div>
 
-<div class="walk-in-section">
-    <h3>🏃 來店客備忘</h3>
-    <ul>
-        <li><b>超早來的畢業生：</b>冰美式</li>
-        <li><b>短髮瘦瘦：</b>19-23g粉 / 磨8 (冰/熱美)</li>
-        <li><b>戴眼鏡公主頭：</b>熱拿鐵</li>
-        <li><b>芭樂：</b>熱拿鐵 + 糖(3-5g)</li>
-        <li><b>梨山蜜蘋果 熱美式or熱拿鐵(四或五，第二趟問)</b></li>
-        
-    </ul>
-</div>
+
 
 <script>
     // ----------------------------------------------------
@@ -330,13 +330,12 @@
         { loc: "左邊鄰居", name: "國聯哥", item: "冰美式", type: "ice_am", days: [] },
 
         // 其他區域
-        { loc: "近十字路口", name: "牛肉爸爸兒子", item: "大拿鐵 x2", count: 2, type: "large_hot_latte", days: [], note: "爸爸粉20g" },
+        { loc: "近十字路口", name: "牛肉爸爸兒子", item: "大拿鐵x2", count: 2, type: "large_hot_latte", days: [], note: "爸爸粉20g" },
         { loc: "過十字路口直行", name: "魚老闆", item: "大拿鐵", type: "large_hot_latte", days: [2, 3, 5], tag: "寄杯" },
         { loc: "過十字路口直行", name: "魚老闆鄰居(水果)", item: "拿鐵", type: "hot_latte", days: [2, 3, 6, 0] }, 
         { loc: "過十字路口直行", name: "小辣椒", item: "熱美式", type: "hot_am", days: [] },
-        { loc: "過十字路口直行", name: "城隍廟口鐵鍋行", item: "熱美式", type: "hot_am", days: [5] },
-
-        { loc: "過十字路口直行", name: "蝦老闆", item: "冰美式 x2",  count: 2,type: "ice_am", days: [2, 4, 5, 6, 0] },
+        { loc: "過十字路口直行", name: "城隍廟口鐵鍋行", item: "冰美式x2",  count: 2, type: "ice_am", days: [5] },
+        { loc: "過十字路口直行", name: "蝦老闆", item: "熱美式",type: "hot_am", days: [2, 4, 5, 6, 0] },
         
         // 貢丸老闆：將這兩筆資料視為一組進行合併渲染
         { loc: "過十字路口直行", name: "貢丸老闆 (拿)", item: "熱拿鐵", type: "hot_latte", days: [3, 0] },
@@ -693,3 +692,4 @@
 </script>
 </body>
 </html>
+
