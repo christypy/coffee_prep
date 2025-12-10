@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>咖啡備餐確認系統 (菜單置底)</title>
+<title>咖啡備餐確認系統 (手機優化/菜單可見)</title>
 <style>
     :root {
         /* 主色板 */
@@ -35,14 +35,9 @@
         font-weight: 600;
     }
     
-    /* ==== 懸浮標頭區塊 ==== */
-    .sticky-header {
-        position: sticky;
-        top: 0;
-        z-index: 100;
-        background: var(--color-background); 
+    /* ==== 移除懸浮標頭，使其內容正常捲動 ==== */
+    .header-content {
         padding-top: 10px; 
-        box-shadow: 0 4px 8px -4px rgba(0, 0, 0, 0.15); 
     }
     
     /* 控制區 */
@@ -129,7 +124,7 @@
         margin-top: 5px;
         padding: 5px 0;
         border-top: 1px dashed var(--color-light-gray);
-        display: none; /* 初始隱藏 */
+        display: none; 
     }
     .stat-detail-item {
         display: flex;
@@ -185,7 +180,7 @@
     /* ==== 菜單美化樣式 (置底) ==== */
     #menuReference {
         border-top: 5px solid var(--color-accent);
-        margin-top: 25px; /* 與上方統計區拉開距離 */
+        margin-top: 25px; 
         padding: 15px;
     }
     
@@ -210,7 +205,7 @@
         border-bottom: 1px solid var(--color-light-gray);
     }
     .menu-group-full tbody tr:nth-child(even) {
-        background-color: #fcfbf8; /* 斑馬紋 */
+        background-color: #fcfbf8; 
     }
     .menu-group-full tbody td {
         padding: 8px 5px;
@@ -235,7 +230,7 @@
     
     /* 飲品速查區 */
     .quick-price-box-footer {
-        background: #fff5e6; /* 更亮的背景色 */
+        background: #fff5e6; 
         border: 2px solid var(--color-accent);
         border-radius: 8px;
         padding: 15px;
@@ -292,7 +287,18 @@
 
 <h2>☕ 備餐助理</h2>
 
-<div class="sticky-header">
+<div class="info-section">
+    <h3>🏃 來店客備忘</h3>
+    <ul>
+        <li><b>超早來的畢業生：</b>冰美式</li>
+        <li><b>短髮瘦瘦：</b>19-23g粉 / 磨8or9 (冰/熱美)</li>
+        <li><b>內衣店老闆：</b>熱拿鐵</li>
+        <li><b>芭樂：</b>熱拿鐵 + 糖(3g)</li>
+        <li><b>梨山蜜蘋果 熱美式or熱拿鐵(四或五，第二趟問)</b></li>
+    </ul>
+</div>
+
+<div class="header-content">
     <div class="controls">
         <select id="daySelect" onchange="renderOrders()">
             <option value="1">星期一</option>
@@ -307,17 +313,6 @@
         <button class="btn" id="clearAllBtn" onclick="clearAllDone()">全部取消</button>
     </div>
 
-    <div class="info-section">
-        <h3>🏃 來店客備忘</h3>
-        <ul>
-            <li><b>超早來的畢業生：</b>冰美式</li>
-            <li><b>短髮瘦瘦：</b>19-23g粉 / 磨8or9 (冰/熱美)</li>
-            <li><b>內衣店老闆：</b>熱拿鐵</li>
-            <li><b>芭樂：</b>熱拿鐵 + 糖(3g)</li>
-            <li><b>梨山蜜蘋果 熱美式or熱拿鐵(四或五，第二趟問)</b></li>
-        </ul>
-    </div>
-    
     <div class="stats-container">
         <div class="stat-box" style="border-top-color: var(--color-success);">
             <h3>🏠 左右鄰居 總計</h3>
@@ -334,9 +329,14 @@
     <div id="neighborColumn" class="list-column"></div>
     <div id="otherColumn" class="list-column"></div>
 </div>
-
+<div class="quick-price-box-footer">
+    <b>☕ 義式基礎飲品價格</b>
+    熱美式: <span>$70</span> | 冰美式: <span>$75</span> | 
+    熱拿鐵: <span>$85</span> | 冰拿鐵: <span>$85</span> | 
+    大拿鐵: <span>$95</span>
+</div>
 <div class="info-section" id="menuReference">
-    <h3>📋 菜單價格參考</h3>
+    <h3>📋 豆單</h3>
     
     <table class="menu-group-full">
         <thead>
@@ -409,18 +409,13 @@
                 <td>柔 (義式基礎/單品)</td>
                 <td><span class="menu-price">130</span></td>
                 <td><span class="menu-price">180</span></td>
-                <td><span class="menu-note">450</span></td>
+                <td><span class="menu-note">無</span></td>
                 <td><span class="menu-price">35</span></td>
             </tr>
         </tbody>
     </table>
 
-    <div class="quick-price-box-footer">
-        <b>☕ 義式基礎飲品價格速查</b>
-        熱美式: <span>$70</span> | 冰美式: <span>$75</span> | 
-        熱拿鐵: <span>$85</span> | 冰拿鐵: <span>$85</span> | 
-        大拿鐵: <span>$95</span>
-    </div>
+ 
 </div>
 
 
@@ -428,6 +423,8 @@
     // ----------------------------------------------------
     // 【JS 邏輯區】 
     // ----------------------------------------------------
+    
+    // 移除 sticky-header 後，這裡只需確保所有功能邏輯正常運行即可
     
     const expandedStats = new Set();
     
