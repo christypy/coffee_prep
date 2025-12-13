@@ -522,7 +522,7 @@
     <b>☕ 義式基礎飲品</b>
     熱美式: <span>$70</span> | 冰美式: <span>$75</span> | 
     熱拿鐵: <span>$85</span> | 冰拿鐵: <span>$85</span> | 
-     大拿鐵: <span>$95</span>
+     大熱美: <span>$80</span>| 大拿鐵: <span>$95</span>
 </div>
 
 <div class="info-section" id="menuReference">
@@ -628,8 +628,12 @@
         { loc: "左邊鄰居", name: "布老闆", item: "熱美式", type: "hot_am", days: [5], count: 1, note: "寄杯" },
         { loc: "左邊鄰居", name: "甘蔗雞", item: "冰美式", type: "ice_am", days: [], count: 1 },
         { loc: "左邊鄰居", name: "國聯哥", item: "冰美式", type: "ice_am", days: [], count: 1 },
+        { loc: "左邊鄰居", name: "宜蘭魚攤", item: "冰美式", type: "ice_am", days: [6], count: 1 },
+        { loc: "左邊鄰居", name: "宜蘭魚攤", item: "冰拿鐵", type: "ice_latte_sugar", days: [6], count: 1 ,note:"加糖"},
 
         // 其他區域
+        { loc: "恐龍嫩仙草對面", name: "賣魚的員工", item: "大熱美", type: "large_hot_am", days: [6,0], note: "六給兩天錢" },
+
         { loc: "近十字路口", name: "牛肉爸爸兒子", item: "大拿鐵", count: 2, type: "large_hot_latte", days: [], note: "爸爸粉20g" },
         { loc: "過十字路口直行", name: "魚老闆", item: "大拿鐵", type: "large_hot_latte", days: [2, 3, 5], count: 1, note: "寄杯" },
         { loc: "過十字路口直行", name: "魚老闆鄰居(水果)", item: "熱拿鐵", type: "hot_latte", days: [2, 3, 6, 0], count: 1 }, 
@@ -656,8 +660,11 @@
 
     const typeNames = {
         hot_am: '☕ 熱美式', ice_am: '🧊 冰美式', 
+        large_hot_am:"☕️ 大熱美",
         hot_latte: '🔥 熱拿鐵', 
         hot_latte_sugar: '🍬 熱拿鐵 (加糖)', 
+        ice_latte_sugar: '🍭 冰拿鐵 (加糖)', 
+
         ice_latte: '❄️ 冰拿鐵', 
         large_hot_latte: '🥤 大熱拿', 
         hand_drip: '💧 手沖',
